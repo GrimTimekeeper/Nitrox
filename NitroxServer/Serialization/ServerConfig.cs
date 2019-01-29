@@ -110,24 +110,16 @@ namespace NitroxServer.ConfigParser
             }
         }
 
-        private string _serverAdminPassword = null;
         public string ServerAdminPassword
         {
             get
             {
-                if(_serverAdminPassword == null)
+                string _ServerAdminPassword = null;
+                if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings[DEFAULT_PASSWORD_SETTING]))
                 {
-                    string configPassword = ConfigurationManager.AppSettings[DEFAULT_PASSWORD_SETTING];
-                    if (!string.IsNullOrEmpty(configPassword))
-                    {
-                        _serverAdminPassword = ConfigurationManager.AppSettings[DEFAULT_PASSWORD_SETTING];
-                    }
-                    else
-                    {
-                        _serverAdminPassword = GenerateRandomString(12, false); // generate temporary random password
-                    }
+                    _ServerAdminPassword = ConfigurationManager.AppSettings[DEFAULT_PASSWORD_SETTING];
                 }
-                return _serverAdminPassword;
+                return _ServerAdminPassword ?? GenerateRandomString(12, false);
             }
         }
 
@@ -164,15 +156,16 @@ namespace NitroxServer.ConfigParser
             return builder.ToString();  
         }
 
-        public void ChangeServerAdminPassword(string pw)
+        public string ChangeServerAdminPassword(string pw)
         {
-            _serverAdminPassword = pw;
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             config.AppSettings.Settings[DEFAULT_PASSWORD_SETTING].Value = pw;
             config.Save(ConfigurationSaveMode.Modified);
 
             ConfigurationManager.RefreshSection("appSettings");
+
+            return ConfigurationManager.AppSettings[DEFAULT_PASSWORD_SETTING];
         }
     }
 }

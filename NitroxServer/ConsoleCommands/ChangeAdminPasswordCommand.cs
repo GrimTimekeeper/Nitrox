@@ -28,8 +28,8 @@ namespace NitroxServer.ConsoleCommands
         {
             try
             {
-                string playerName = player.IsPresent() ? player.Get().Name : "SERVER";
-                ChangePassword(args[0], playerName);
+                string playerName = player.Get().Name;
+                ChangePassword(args, playerName);
             }
             catch (Exception ex)
             {
@@ -42,10 +42,9 @@ namespace NitroxServer.ConsoleCommands
             return args.Length >= 1;
         }
 
-        private void ChangePassword(string password, string name)
+        private void ChangePassword(string[] args, string player)
         {
-            serverConfig.ChangeServerAdminPassword(password);
-            Log.Info($"Server Password changed to \"{password}\" by {name}");
+            Log.Info("Server Password changed to: " + serverConfig.ChangeServerAdminPassword(args[0]) + " By:" + player);
         }
     }
 }
